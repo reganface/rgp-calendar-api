@@ -2,9 +2,10 @@
 
 require_once "class.calendar.php";
 
-$widget_guid = "ed43c50ed6b947ecb4a628fd4f0b5c66";
+$widget_guid = "";
 
 try {
+	// class throws exceptions on errors so it should be in a try block
 	$calendar = new Calendar($widget_guid);
 	$schedule = $calendar->get_data();
 } catch (Exception $e) {
@@ -13,6 +14,7 @@ try {
 }
 
 
+// output
 foreach($schedule as $date => $classes) {
 	echo "<h4>" . date("l, F jS, Y", strtotime($date)) . "</h4>";
 
