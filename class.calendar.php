@@ -1,9 +1,9 @@
 <?php
 /***************************************
- * 
+ *
  * Simple class for pulling data from a
  * RGP Calendar Widget
- * 
+ *
  ***************************************/
 
 
@@ -21,11 +21,11 @@ class Calendar {
 		// make sure this looks like a guid
 		if (strlen($this->_widget_guid) !== 32)
 			throw new Exception("Invalid widget GUID");
-		
+
 		// default range is one week starting from today
 		$this->_start_date = $start_date?:strtotime("today");
 		$this->_end_date = $end_date?:strtotime("+7 days", $this->_start_date);
-		
+
 		// fetch data from RGP
 		$this->_fetch_data();
 	}
@@ -39,26 +39,24 @@ class Calendar {
 
 	// returns formated and sorted data
 	public function get_data() {
+		$this->_organize_raw_data();
+		$this->_parse_data();
 		return $this->_data;
 	}
 
 
 
-
-
 	/***************************************
-	 * 
+	 *
 	 * Private Functions
-	 * 
+	 *
 	 ***************************************/
 
-	
+
 	// retrieve the widget data from RGP's servers
 	private function _fetch_data() {
 		$url = "https://app.rockgympro.com/b/widget/?a=fcfeed&widget_guid={$this->_widget_guid}&start={$this->_start_date}&end={$this->_end_date}";
 		$this->_raw_data = json_decode(file_get_contents($url), true);
-		$this->_organize_raw_data();
-		$this->_parse_data();
 	}
 
 
@@ -89,7 +87,7 @@ class Calendar {
 	private function _parse_data() {
 		if (empty($this->_data))
 			return;
-		
+
 		foreach($this->_data as $date => $classes) {
 			foreach($classes as $index => $class) {
 				// save original title and html description
@@ -158,7 +156,7 @@ class Calendar {
 		$pos = strpos($split[1], "<a href=\"/b/widget/?a=offering");
 
 		// remove the end of the message to get the pure description
-		$description = substr($split[1], 0, $pos - 26);
+		$description = substr($split[1], 0, $pos - 30);
 
 		return $description;
 	}
@@ -169,5 +167,5 @@ class Calendar {
 
 // sorting function for class times
 function class_sort($a, $b) {
-	return strtotime($a["start"] - strtotime($b["start"]));
+	return strtotime($a["start"]) - strtotime($b["start"]);
 }
