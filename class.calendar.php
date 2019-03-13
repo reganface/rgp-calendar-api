@@ -151,11 +151,9 @@ class Calendar {
 		if (!isset($split[1]))
 			return "";	// no description
 
-		// use the "more information" link as a known point in the message
-		$pos = strpos($split[1], "<a href=\"/b/widget/?a=offering");
-
-		// remove the end of the message to get the pure description
-		$description = substr($split[1], 0, $pos - 30);
+		// we should be able to strip out "</div></p>" and everything after it
+		// to get just the actual description
+		$description = explode("</div></p>", $split[1])[0];
 
 		return $description;
 	}
